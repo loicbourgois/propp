@@ -41,7 +41,7 @@ def clean_sacr_content(sacr_content):
 
 def remove_sacr_annotations(sacr_content):
     # Remove all substrings matching the mention_oppening_pattern
-    mention_oppening_pattern = r'\{[A-Za-z0-9_-]+:EN="([^"]*)"+ '
+    mention_oppening_pattern = r'\{[A-Za-z0-9_\-êÉ]+:EN="([^"]*)"+ '
     raw_text = re.sub(mention_oppening_pattern, "", sacr_content)
     # Remove all '}' mention_closing characters
     raw_text = raw_text.replace('{', '')
@@ -58,7 +58,7 @@ def get_mention_text_from_ids(start_id, end_id, text):
     return text[start_id: end_id]
 
 def extract_entities_annotations(sacr_content):
-    mention_opening_pattern = r'\{[A-Za-z0-9_-]+:EN="([^"]*)"+ '
+    mention_opening_pattern = r'\{[A-Za-z0-9_\-êÉ]+:EN="([^"]*)"+ '
     # Find all matches with their start and end positions
     matches = [(m.start(), m.end(), m.group()) for m in re.finditer(mention_opening_pattern, sacr_content)]
     opening_ids = sorted([start for start, end, match in matches])
@@ -84,7 +84,7 @@ def extract_entities_annotations(sacr_content):
     # Apply the function to create a new 'text' column
     df["annotation"] = df.apply(lambda row: get_mention_text_from_ids(row["sacr_start_id"], row["sacr_end_id"]+1, sacr_content), axis=1)
     # Apply regex to extract the substring between { and :EN="
-    df["COREF_name"] = df["annotation"].str.extract(r'\{([A-Za-z0-9_-]+):EN="')
+    df["COREF_name"] = df["annotation"].str.extract(r'\{([A-Za-z0-9_\-êÉ]+):EN="')
     # Apply regex to extract text between the first two quotation marks
     df["cat"] = df["annotation"].str.extract(r'="([^"]*)"')
 
